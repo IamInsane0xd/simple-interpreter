@@ -1,0 +1,18 @@
+program : (statement SEMI)+
+
+statement : variable_decl
+					| variable_assign
+					| expr
+
+variable_decl : VAR IDENTIFIER EQUALS expr
+
+variable_assign : IDENTIFIER EQUALS expr
+
+expr : term ((PLUS | MINUS) term)*
+
+term : factor ((MUL | DIV) factor)*
+
+factor : INTEGER
+       | LPAREN expr RPAREN
+       | (PLUS | MINUS) factor
+       | IDENTIFIER

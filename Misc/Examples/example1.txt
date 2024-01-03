@@ -1,0 +1,11 @@
+func main() {
+	var a: number = 12;
+	var b: number;
+	var sum: number = sum(a + b);
+
+	println(sum);
+}
+
+func sum(): number {
+	return a + b;
+}
