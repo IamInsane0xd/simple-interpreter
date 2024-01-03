@@ -2,8 +2,8 @@
 
 ## About
 
-another interpreter project i started to get more familiar with golang.<br>
-i dont know if i'll finish it but i hope i will.
+another interpreter project I started to get more familiar with golang.<br>
+I don't know if I'll finish it, but I hope I will.
 
 ## To build and run:
 
