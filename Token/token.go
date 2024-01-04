@@ -16,6 +16,7 @@ const (
 	TtSlash
 	TtLparen
 	TtRparen
+	TtEquals
 	TtKeyword
 	TtIdentifier
 )
@@ -68,6 +69,9 @@ func TTypeToString(tType Type) string {
 
 	case TtRparen:
 		return "RPAREN"
+
+	case TtEquals:
+		return "EQUALS"
 
 	case TtKeyword:
 		return "KEYWORD"

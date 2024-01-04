@@ -81,6 +81,10 @@ func (l *Lexer) GetNextToken() (Token.Token, error) {
 			l.advance()
 			return Token.NewToken(Token.TtRparen, ")"), nil
 
+		case '=':
+			l.advance()
+			return Token.NewToken(Token.TtEquals, "="), nil
+
 		default:
 			return Token.ErrorToken, errors.New(fmt.Sprintf("error: unrecognized character `%c`", l.currentRune))
 		}
