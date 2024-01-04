@@ -13,6 +13,9 @@ const (
 	NtInteger
 	NtBinOp
 	NtUnOp
+	NtIdentifier
+	NtVarDecl
+	NtVarAssign
 )
 
 var (
@@ -55,4 +58,16 @@ func NewBinOpNode(left Node, op Token.Token, right Node) Node {
 
 func NewUnOpNode(op Token.Token, right Node) Node {
 	return NewNode(NtUnOp, op, 0, nil, &op, &right)
+}
+
+func NewIdentifierNode(token Token.Token, right Node) Node {
+	return NewNode(NtIdentifier, token, 0, nil, nil, &right)
+}
+
+func NewVarDeclNode(token Token.Token, left Node, right Node) Node {
+	return NewNode(NtVarDecl, token, 0, &left, nil, &right)
+}
+
+func NewVarAssignNode(token Token.Token, left Node, right Node) Node {
+	return NewNode(NtVarAssign, token, 0, &left, nil, &right)
 }
