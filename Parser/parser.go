@@ -45,6 +45,104 @@ func (p *Parser) eat(tType Token.Type) error {
 	return nil
 }
 
+func (p *Parser) program() (AST.Program, error) {
+	var nodes []AST.Node
+
+	for p.currentToken.Type != Token.TtEof {
+		statement, err := p.statement()
+
+		if err != nil {
+			return AST.ErrorProgram, err
+		}
+
+		err = p.eat(Token.TtSemi)
+
+		if err != nil {
+			return AST.ErrorProgram, err
+		}
+
+		nodes = append(nodes, statement)
+	}
+
+	return AST.NewProgram(nodes), nil
+}
+
+func (p *Parser) statement() (AST.Node, error) {
+	switch p.currentToken.Type {
+	case Token.TtKeyword:
+		token := p.currentToken
+		err := p.eat(Token.TtKeyword)
+
+		if err != nil {
+			return AST.ErrorNode, err
+		}
+
+		switch token.SValue {
+		case "var":
+			return p.variableDecl()
+
+		default:
+			return AST.ErrorNode, errors.New(fmt.Sprintf("Unknown keyword: %s", token.SValue))
+		}
+
+	case Token.TtIdentifier:
+		if p.lexer.Peek(1) == '=' {
+			return p.variableAssign()
+		}
+
+		return p.factor()
+
+	default:
+		return p.expr()
+	}
+}
+
+func (p *Parser) variableDecl() (AST.Node, error) {
+	left, err := p.identifier()
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	token := p.currentToken
+	err = p.eat(Token.TtEquals)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	right, err := p.expr()
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	return AST.NewVarDeclNode(token, left, right), nil
+}
+
+func (p *Parser) variableAssign() (AST.Node, error) {
+	left, err := p.identifier()
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	token := p.currentToken
+	err = p.eat(Token.TtEquals)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	right, err := p.expr()
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	return AST.NewVarAssignNode(token, left, right), nil
+}
+
 func (p *Parser) expr() (AST.Node, error) {
 	left, err := p.term()
 
@@ -208,6 +306,15 @@ func (p *Parser) factor() (AST.Node, error) {
 
 		return AST.NewUnOpNode(token, factor), nil
 
+	case Token.TtIdentifier:
+		identifier, err := p.identifier()
+
+		if err != nil {
+			return AST.ErrorNode, err
+		}
+
+		return identifier, nil
+
 	default:
 		break // * Do nothing
 	}
@@ -215,6 +322,17 @@ func (p *Parser) factor() (AST.Node, error) {
 	return AST.ErrorNode, p.error(Token.TtInteger)
 }
 
+func (p *Parser) identifier() (AST.Node, error) {
+	token := p.currentToken
+	err := p.eat(Token.TtIdentifier)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	return AST.NewIdentifierNode(token), nil
+}
+
 func (p *Parser) Parse() (AST.Node, error) {
-	return p.expr()
+	return p.statement()
 }
