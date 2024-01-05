@@ -9,6 +9,10 @@ import (
 	"simpleInterpreter/Token"
 )
 
+var (
+	symbolTable = make(map[string]int64)
+)
+
 type Interpreter struct {
 	parser Parser.Parser
 }
@@ -27,6 +31,15 @@ func visit(n *AST.Node) (int64, error) {
 
 	case AST.NtUnOp:
 		return visitUnOp(n)
+
+	case AST.NtIdentifier:
+		return visitIdentifierNode(n)
+
+	case AST.NtVarDecl:
+		return visitVarDeclNode(n)
+
+	case AST.NtVarAssign:
+		return visitVarAssignNode(n)
 
 	default:
 		break // * Do nothing
@@ -100,6 +113,52 @@ func visitUnOp(n *AST.Node) (int64, error) {
 	}
 
 	return rightValue, nil
+}
+
+func visitIdentifierNode(n *AST.Node) (int64, error) {
+	value, exists := symbolTable[n.Token.SValue]
+
+	if !exists {
+		return 0, errors.New(fmt.Sprintf("error: variable %s does not exist", n.Token.SValue))
+	}
+
+	return value, nil
+}
+
+func visitVarDeclNode(n *AST.Node) (int64, error) {
+	symbol := n.Left.Token.SValue
+	_, exists := symbolTable[symbol]
+
+	if exists {
+		return 0, errors.New(fmt.Sprintf("error: variable %s already exists", symbol))
+	}
+
+	value, err := visit(n.Right)
+
+	if err != nil {
+		return 0, err
+	}
+
+	symbolTable[symbol] = value
+	return value, nil
+}
+
+func visitVarAssignNode(n *AST.Node) (int64, error) {
+	symbol := n.Left.Token.SValue
+	_, exists := symbolTable[symbol]
+
+	if !exists {
+		return 0, errors.New(fmt.Sprintf("error: variable %s does not exist", symbol))
+	}
+
+	value, err := visit(n.Right)
+
+	if err != nil {
+		return 0, err
+	}
+
+	symbolTable[symbol] = value
+	return value, nil
 }
 
 func (i *Interpreter) Interpret() (int64, error) {
