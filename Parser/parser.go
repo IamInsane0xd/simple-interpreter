@@ -90,7 +90,7 @@ func (p *Parser) statement() (AST.Node, error) {
 			return p.variableAssign()
 		}
 
-		return p.factor()
+		return p.expr()
 
 	default:
 		return p.expr()
