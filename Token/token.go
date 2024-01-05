@@ -17,6 +17,7 @@ const (
 	TtLparen
 	TtRparen
 	TtEquals
+	TtSemi
 	TtKeyword
 	TtIdentifier
 )
@@ -72,6 +73,9 @@ func TTypeToString(tType Type) string {
 
 	case TtEquals:
 		return "EQUALS"
+
+	case TtSemi:
+		return "SEMI"
 
 	case TtKeyword:
 		return "KEYWORD"

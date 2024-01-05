@@ -11,7 +11,7 @@ import (
 )
 
 func Keywords() []string {
-	return []string{"var", "return"}
+	return []string{"var"}
 }
 
 type Lexer struct {
@@ -37,6 +37,28 @@ func (l *Lexer) advance() {
 	}
 
 	l.currentRune = rune(l.text[l.pos])
+}
+
+func (l *Lexer) Peek(offset int) rune {
+	index := l.pos + offset
+
+	if index >= len(l.text) {
+		return 0
+	}
+
+	char := rune(l.text[index])
+
+	for unicode.IsDigit(char) {
+		index++
+
+		if index >= len(l.text) {
+			return 0
+		}
+
+		char = rune(l.text[index])
+	}
+
+	return char
 }
 
 func (l *Lexer) GetNextToken() (Token.Token, error) {
@@ -84,6 +106,10 @@ func (l *Lexer) GetNextToken() (Token.Token, error) {
 		case '=':
 			l.advance()
 			return Token.NewToken(Token.TtEquals, "="), nil
+
+		case ';':
+			l.advance()
+			return Token.NewToken(Token.TtSemi, ";"), nil
 
 		default:
 			return Token.ErrorToken, errors.New(fmt.Sprintf("error: unrecognized character `%c`", l.currentRune))
