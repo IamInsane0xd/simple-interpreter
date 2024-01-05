@@ -2,6 +2,7 @@ package Interpreter
 
 import (
 	"errors"
+	"fmt"
 
 	"simpleInterpreter/AST"
 	"simpleInterpreter/Parser"
@@ -31,7 +32,7 @@ func visit(n *AST.Node) (int64, error) {
 		break // * Do nothing
 	}
 
-	return 0, errors.New("error: unrecognized node type")
+	return 0, errors.New(fmt.Sprintf("error: unrecognized node type %s", AST.NTypeToString(n.Type)))
 }
 
 func visitInteger(n *AST.Node) int64 {
