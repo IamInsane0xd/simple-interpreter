@@ -45,26 +45,28 @@ func (p *Parser) eat(tType Token.Type) error {
 	return nil
 }
 
-func (p *Parser) program() (AST.Program, error) {
+func (p *Parser) program() (AST.Node, error) {
 	var nodes []AST.Node
 
 	for p.currentToken.Type != Token.TtEof {
 		statement, err := p.statement()
 
 		if err != nil {
-			return AST.ErrorProgram, err
+			return AST.ErrorNode, err
 		}
 
 		err = p.eat(Token.TtSemi)
 
 		if err != nil {
-			return AST.ErrorProgram, err
+			return AST.ErrorNode, err
 		}
 
 		nodes = append(nodes, statement)
 	}
 
-	return AST.NewProgram(nodes), nil
+	token := p.currentToken
+
+	return AST.NewProgramNode(token, nodes), nil
 }
 
 func (p *Parser) statement() (AST.Node, error) {
@@ -334,5 +336,5 @@ func (p *Parser) identifier() (AST.Node, error) {
 }
 
 func (p *Parser) Parse() (AST.Node, error) {
-	return p.statement()
+	return p.program()
 }

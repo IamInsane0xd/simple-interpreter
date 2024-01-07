@@ -20,40 +20,34 @@ const (
 )
 
 var (
-	ErrorProgram = NewProgram([]Node{})
-	ErrorNode    = NewNode(NtError, Token.ErrorToken, 0, nil, nil, nil)
+	ErrorNode = NewNode(NtError, Token.ErrorToken, 0, nil, nil, nil, nil)
 )
 
-type Program struct {
-	Type  Type
-	Nodes []Node
-}
-
 type Node struct {
-	Type  Type
-	Token Token.Token
-	Value int64
-	Left  *Node
-	Op    *Token.Token
-	Right *Node
+	Type     Type
+	Token    Token.Token
+	Value    int64
+	Left     *Node
+	Op       *Token.Token
+	Right    *Node
+	Children *[]Node
 }
 
-func NewProgram(nodes []Node) Program {
-	return Program{
-		Type:  NtProgram,
-		Nodes: nodes,
-	}
-}
-
-func NewNode(nType Type, token Token.Token, value int64, left *Node, op *Token.Token, right *Node) Node {
+func NewNode(nType Type, token Token.Token, value int64, left *Node, op *Token.Token, right *Node,
+	children *[]Node) Node {
 	return Node{
-		Type:  nType,
-		Token: token,
-		Value: value,
-		Left:  left,
-		Op:    op,
-		Right: right,
+		Type:     nType,
+		Token:    token,
+		Value:    value,
+		Left:     left,
+		Op:       op,
+		Right:    right,
+		Children: children,
 	}
+}
+
+func NewProgramNode(token Token.Token, children []Node) Node {
+	return NewNode(NtProgram, token, 0, nil, nil, nil, &children)
 }
 
 func NewIntegerNode(token Token.Token) (Node, error) {
@@ -63,27 +57,27 @@ func NewIntegerNode(token Token.Token) (Node, error) {
 		return ErrorNode, err
 	}
 
-	return NewNode(NtInteger, token, value, nil, nil, nil), nil
+	return NewNode(NtInteger, token, value, nil, nil, nil, nil), nil
 }
 
 func NewBinOpNode(left Node, op Token.Token, right Node) Node {
-	return NewNode(NtBinOp, op, 0, &left, &op, &right)
+	return NewNode(NtBinOp, op, 0, &left, &op, &right, nil)
 }
 
 func NewUnOpNode(op Token.Token, right Node) Node {
-	return NewNode(NtUnOp, op, 0, nil, &op, &right)
+	return NewNode(NtUnOp, op, 0, nil, &op, &right, nil)
 }
 
 func NewIdentifierNode(token Token.Token) Node {
-	return NewNode(NtIdentifier, token, 0, nil, nil, nil)
+	return NewNode(NtIdentifier, token, 0, nil, nil, nil, nil)
 }
 
 func NewVarDeclNode(token Token.Token, left Node, right Node) Node {
-	return NewNode(NtVarDecl, token, 0, &left, nil, &right)
+	return NewNode(NtVarDecl, token, 0, &left, nil, &right, nil)
 }
 
 func NewVarAssignNode(token Token.Token, left Node, right Node) Node {
-	return NewNode(NtVarAssign, token, 0, &left, nil, &right)
+	return NewNode(NtVarAssign, token, 0, &left, nil, &right, nil)
 }
 
 func NTypeToString(nType Type) string {

@@ -23,6 +23,9 @@ func NewInterpreter(parser Parser.Parser) Interpreter {
 
 func visit(n *AST.Node) (int64, error) {
 	switch n.Type {
+	case AST.NtProgram:
+		return visitProgram(n)
+
 	case AST.NtInteger:
 		return visitInteger(n), nil
 
@@ -46,6 +49,21 @@ func visit(n *AST.Node) (int64, error) {
 	}
 
 	return 0, errors.New(fmt.Sprintf("error: unrecognized node type %s", AST.NTypeToString(n.Type)))
+}
+
+func visitProgram(n *AST.Node) (int64, error) {
+	var value int64
+	var err error
+
+	for _, node := range *n.Children {
+		value, err = visit(&node)
+
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return value, nil
 }
 
 func visitInteger(n *AST.Node) int64 {
