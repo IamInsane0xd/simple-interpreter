@@ -11,3 +11,4 @@ I don't know if I'll finish it, but I hope I will.
 - Open the project folder in a terminal or cmd
 - Run `go build simpleInterpreter`
 - Then to run the program, type `./simpleInterpreter`
+- To run a file with the program: `./simpleInterpreter <file_name>`
