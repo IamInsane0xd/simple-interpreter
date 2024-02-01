@@ -11,6 +11,7 @@ type Type int64
 const (
 	NtError Type = iota - 1
 	NtProgram
+	NtFunction
 	NtInteger
 	NtBinOp
 	NtUnOp
@@ -50,6 +51,10 @@ func NewProgramNode(token Token.Token, children []Node) Node {
 	return NewNode(NtProgram, token, 0, nil, nil, nil, &children)
 }
 
+func NewFunctionNode(token Token.Token, left Node, children []Node) Node {
+	return NewNode(NtFunction, token, 0, &left, nil, nil, &children)
+}
+
 func NewIntegerNode(token Token.Token) (Node, error) {
 	value, err := strconv.ParseInt(token.SValue, 10, 64)
 
@@ -87,6 +92,9 @@ func NTypeToString(nType Type) string {
 
 	case NtProgram:
 		return "PROGRAM"
+
+	case NtFunction:
+		return "FUNCTION"
 
 	case NtInteger:
 		return "INTEGER"

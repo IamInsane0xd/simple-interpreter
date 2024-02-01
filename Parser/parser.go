@@ -83,6 +83,9 @@ func (p *Parser) statement() (AST.Node, error) {
 		case "var":
 			return p.variableDecl()
 
+		case "func":
+			return p.functionDecl()
+
 		default:
 			return AST.ErrorNode, errors.New(fmt.Sprintf("Unknown keyword: %s", token.SValue))
 		}
@@ -97,6 +100,59 @@ func (p *Parser) statement() (AST.Node, error) {
 	default:
 		return p.expr()
 	}
+}
+
+func (p *Parser) functionDecl() (AST.Node, error) {
+	token := p.currentToken
+	left, err := p.identifier()
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	err = p.eat(Token.TtLParen)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	err = p.eat(Token.TtRParen)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	err = p.eat(Token.TtLCurly)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	var nodes []AST.Node
+
+	for p.currentToken.Type != Token.TtRCurly && p.currentToken.Type != Token.TtEof {
+		statement, err := p.statement()
+
+		if err != nil {
+			return AST.ErrorNode, err
+		}
+
+		err = p.eat(Token.TtSemi)
+
+		if err != nil {
+			return AST.ErrorNode, err
+		}
+
+		nodes = append(nodes, statement)
+	}
+
+	err = p.eat(Token.TtRCurly)
+
+	if err != nil {
+		return AST.ErrorNode, err
+	}
+
+	return AST.NewFunctionNode(token, left, nodes), nil
 }
 
 func (p *Parser) variableDecl() (AST.Node, error) {
