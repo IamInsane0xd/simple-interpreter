@@ -97,11 +97,11 @@ func (l *Lexer) GetNextToken() (Token.Token, error) {
 
 		case '(':
 			l.advance()
-			return Token.NewToken(Token.TtLparen, "("), nil
+			return Token.NewToken(Token.TtLParen, "("), nil
 
 		case ')':
 			l.advance()
-			return Token.NewToken(Token.TtRparen, ")"), nil
+			return Token.NewToken(Token.TtRParen, ")"), nil
 
 		case '=':
 			l.advance()

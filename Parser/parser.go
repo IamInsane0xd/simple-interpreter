@@ -255,8 +255,8 @@ func (p *Parser) factor() (AST.Node, error) {
 
 		return AST.NewIntegerNode(token)
 
-	case Token.TtLparen:
-		err := p.eat(Token.TtLparen)
+	case Token.TtLParen:
+		err := p.eat(Token.TtLParen)
 
 		if err != nil {
 			return AST.ErrorNode, err
@@ -268,7 +268,7 @@ func (p *Parser) factor() (AST.Node, error) {
 			return AST.ErrorNode, err
 		}
 
-		err = p.eat(Token.TtRparen)
+		err = p.eat(Token.TtRParen)
 
 		if err != nil {
 			return AST.ErrorNode, err

@@ -14,10 +14,13 @@ const (
 	TtMinus
 	TtStar
 	TtSlash
-	TtLparen
-	TtRparen
+	TtLParen
+	TtRParen
+	TtLCurly
+	TtRCurly
 	TtEquals
 	TtSemi
+	TtColon
 	TtKeyword
 	TtIdentifier
 )
@@ -65,17 +68,26 @@ func TTypeToString(tType Type) string {
 	case TtSlash:
 		return "SLASH"
 
-	case TtLparen:
+	case TtLParen:
 		return "LPAREN"
 
-	case TtRparen:
+	case TtRParen:
 		return "RPAREN"
+
+	case TtLCurly:
+		return "LCURLY"
+
+	case TtRCurly:
+		return "RCURLY"
 
 	case TtEquals:
 		return "EQUALS"
 
 	case TtSemi:
 		return "SEMI"
+
+	case TtColon:
+		return "COLON"
 
 	case TtKeyword:
 		return "KEYWORD"
@@ -84,6 +96,6 @@ func TTypeToString(tType Type) string {
 		return "IDENTIFIER"
 
 	default:
-		return ""
+		return "NO_REPR"
 	}
 }

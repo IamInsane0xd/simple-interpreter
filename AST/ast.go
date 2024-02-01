@@ -107,6 +107,6 @@ func NTypeToString(nType Type) string {
 		return "VAR_ASSIGN"
 
 	default:
-		return ""
+		return "NO_REPR"
 	}
 }
