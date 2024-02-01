@@ -1,8 +1,11 @@
 program : (statement SEMI)+
 
-statement : variable_decl
+statement : function_decl
+					| variable_decl
 					| variable_assign
 					| expr
+
+function_decl : FUNC identifier() { (statement SEMI)+ }
 
 variable_decl : VAR identifier EQUALS expr
 
