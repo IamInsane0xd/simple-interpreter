@@ -11,7 +11,7 @@ import (
 )
 
 func Keywords() []string {
-	return []string{"var"}
+	return []string{"var", "func"}
 }
 
 type Lexer struct {
@@ -103,6 +103,14 @@ func (l *Lexer) GetNextToken() (Token.Token, error) {
 			l.advance()
 			return Token.NewToken(Token.TtRParen, ")"), nil
 
+		case '{':
+			l.advance()
+			return Token.NewToken(Token.TtLCurly, "{"), nil
+
+		case '}':
+			l.advance()
+			return Token.NewToken(Token.TtRCurly, "}"), nil
+
 		case '=':
 			l.advance()
 			return Token.NewToken(Token.TtEquals, "="), nil
@@ -110,6 +118,10 @@ func (l *Lexer) GetNextToken() (Token.Token, error) {
 		case ';':
 			l.advance()
 			return Token.NewToken(Token.TtSemi, ";"), nil
+
+		case ':':
+			l.advance()
+			return Token.NewToken(Token.TtColon, ":"), nil
 
 		default:
 			return Token.ErrorToken, errors.New(fmt.Sprintf("error: unrecognized character `%c`", l.currentRune))
